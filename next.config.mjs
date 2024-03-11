@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  // transpilePackages: ["@storefront-ui/react"],
+};
 
 export default nextConfig;
