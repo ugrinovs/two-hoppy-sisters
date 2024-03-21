@@ -5,9 +5,11 @@ import { tailwindConfig } from "@storefront-ui/react/tailwind-config";
 const config: Config = {
   presets: [tailwindConfig],
   content: [
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx}",
+    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/@storefront-ui/react/**/*.{js,mjs}",
   ],
   safelist: [
     "w-6",
@@ -19,15 +21,26 @@ const config: Config = {
     "translate-y-100",
     "translate-y-0",
     "h-368px",
+    {
+      pattern: /bg-(yellow|amber|orange)-.+/,
+      variants: ["hover", "focus", "active"],
+    },
   ],
   theme: {
     extend: {
       backgroundColor: {
-        default: "rgb(var(--background-rgb))",
+        default: {
+          main: "rgb(var(--background-rgb))",
+          inverted: "rgb(var(--foreground-rgb))",
+        },
+
         special: "#EC1171",
       },
       textColor: {
-        default: "rgb(var(--foreground-rgb))",
+        default: {
+          main: "rgb(var(--foreground-rgb))",
+          inverted: "rgb(var(--background-rgb))",
+        },
         special: "#EC1171",
       },
 

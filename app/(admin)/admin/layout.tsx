@@ -1,4 +1,8 @@
+import dynamic from "next/dynamic";
 import AdminSidebar from "./_sidebar/page";
+const DndProviderComponent = dynamic(() => import("./dnd-provider.component"), {
+  ssr: false,
+});
 
 export const metadata = {
   title: "Next.js",
@@ -11,12 +15,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="pt-12 md:pt-20 lg:pt-32 flex items-stretch justify-stretch w-full">
-      <div className="basis-1/6 border-r-slate-700">
-        <AdminSidebar />
+    <DndProviderComponent>
+      <div className="pt-12 md:pt-20 lg:pt-32 flex items-stretch justify-stretch w-full">
+        <div className="basis-1/6 border-r-slate-700">
+          <AdminSidebar />
+        </div>
+        <div className="basis-5/6 flex p-4">{children}</div>
       </div>
-      <div className="basis-5/6 flex p-4">{children}</div>
-    </div>
+    </DndProviderComponent>
   );
 }
 

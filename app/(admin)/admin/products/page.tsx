@@ -1,9 +1,11 @@
+import ProductTable from "@/components/table/product-table/product.table";
 import items from "@/mock/items";
 import Link from "next/link";
 
 export default function AdminProducts() {
   return (
     <div className="flex flex-grow flex-col">
+      <ProductTable products={items} />
       {items.map((item) => (
         <li className="flex" key={item.id}>
           <Link href={`/admin/products/${item.id}`}>

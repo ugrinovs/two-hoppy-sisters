@@ -13,7 +13,7 @@ export default function HeaderComponent({}) {
           alt="Sf Logo"
           width={400}
           height={400}
-          className="xl:w-1/3 lg:w-1/2 md:w-1/2 sm:w-1/2 xs:w-2/3 w-9/12 h-auto object-cover px-16 mx-auto absolute  left-1/2 transform -translate-x-1/2 -translate-y-1/2 "
+          className="2xl:w-1/4 xl:w-1/3 lg:w-1/2 md:w-1/2 sm:w-1/2 xs:w-2/3 w-9/12 h-auto object-cover px-16 mx-auto absolute  left-1/2 transform -translate-x-1/2 -translate-y-1/2 "
         />
       </div>
     </div>

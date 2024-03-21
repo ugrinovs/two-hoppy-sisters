@@ -1,11 +1,14 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
+declare const window: Window & typeof globalThis;
 
 const useIsMobile = (breakpoint = 640) => {
-  const checkForDevice = useCallback(
-    () => (window as Window & typeof globalThis).innerWidth < breakpoint,
-    [breakpoint],
-  );
+  const checkForDevice = useCallback(() => {
+    if (typeof window !== "undefined") {
+      return window.innerWidth < breakpoint;
+    }
+    return false;
+  }, [breakpoint]);
 
   const [isMobile, setIsMobile] = useState(checkForDevice());
 

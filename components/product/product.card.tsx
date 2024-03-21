@@ -1,6 +1,4 @@
-import { Product, ProductKind, ProductKindType } from "@/types/product.types";
-import { CSSTransition } from "react-transition-group";
-import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
+import { Product } from "@/types/product.types";
 import { formatPrice } from "@/utils/price-formatter.util";
 import {
   SfButton,
@@ -14,7 +12,12 @@ import {
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import QuantityChange from "./quantity-change.component";
-import Markdown from "react-markdown";
+import {
+  ColorProductKind,
+  ProductKind,
+  ProductKindType,
+} from "@/types/category.types";
+import ProductCardImage from "./product-card.image";
 
 type ProductCardProps = {
   onAddToCart: () => void;
@@ -31,11 +34,6 @@ export default function ProductCard({
 }: ProductCardProps) {
   const { isOpen, open, close } = useDisclosure({ initialValue: false });
   const productRef = useRef<HTMLDivElement>(null);
-  const [descriptionHeight, setDescriptionHeight] = useState(336);
-  const descriptionContainerRef = useRef<HTMLDivElement>(null);
-  const descriptionRef = useRef<HTMLParagraphElement>(null);
-  const imageRef = useRef<HTMLDivElement>(null);
-  const [overflowDescription, setOverflowDescription] = useState(false);
   const [quantity, setQuantity] = useState(0);
   const priceComponent = useMemo(() => {
     if (onSalePrice) {
@@ -66,9 +64,9 @@ export default function ProductCard({
       return (
         <SfThumbnail
           size="sm"
-          className="w-2 h-2 rounded-full overflow-hidden mr-2"
+          className="!w-4 !h-4 rounded-full overflow-hidden mr-2 text-xs"
           style={{
-            backgroundColor: k.color,
+            backgroundColor: (k as ColorProductKind).color,
           }}
         />
       );
@@ -76,12 +74,16 @@ export default function ProductCard({
 
     if (k.type === ProductKindType.hop) {
       return (
-        <SfThumbnail className="w-3 h-3 rounded-full overflow-hidden mr-2">
+        <SfThumbnail
+          className="!w-4 !h-4 rounded-full overflow-hidden mr-1 p-0"
+          size="sm"
+        >
           <Image
             src="/images/hop-image.png"
             alt={k.name}
-            width="16"
-            height="16"
+            width="20"
+            height="20"
+            className="w-4 h-4 object-cover"
           />
         </SfThumbnail>
       );
@@ -89,38 +91,6 @@ export default function ProductCard({
 
     return null;
   }, []);
-
-  useEffect(() => {
-    if (descriptionRef.current) {
-      const c = descriptionRef.current;
-      const textContainer = {
-        width: c.scrollWidth,
-        height: c.scrollHeight,
-      };
-
-      const cont = c.getBoundingClientRect();
-      const container = {
-        width: cont.width,
-        height: cont.height,
-      };
-
-      console.log(
-        "oveflow",
-        textContainer.width > container.width ||
-          textContainer.height > container.height,
-        {
-          textContainer,
-          container,
-          text: c.innerText,
-        },
-      );
-      setDescriptionHeight(textContainer.height + 32);
-      setOverflowDescription(
-        textContainer.width > container.width ||
-          textContainer.height > container.height,
-      );
-    }
-  }, [descriptionRef, description]);
 
   useEffect(() => {
     const clickHandler = (e: MouseEvent) => {
@@ -153,108 +123,41 @@ export default function ProductCard({
     setQuantity((prev) => Math.max(prev - 1, 0));
   };
 
-  console.log("overflowDescription", overflowDescription);
   return (
     <div
       className="shadow-md hover:shadow-lg max-w-[300px] my-8 md:mx-4 rounded-md"
       ref={productRef}
     >
-      <div className="relative h-[336px] overflow-hidden">
-        <SfLink className="block w-full  h-[336px]" onClick={open}>
-          <Image
-            src={image}
-            alt={name}
-            className={`object-cover h-full  aspect-square transition-all duration-200 pb-8 rounded-t-md ${
-              isOpen && description ? "filter blur-sm" : ""
-            }`}
-            width="300"
-            height="332"
-          />
-          {description && (
-            <CSSTransition
-              nodeRef={imageRef}
-              in={!isOpen}
-              timeout={100}
-              onEnter={() => {
-                console.log("entering desc");
-              }}
-              onExit={() => {
-                console.log("exiting desc");
-              }}
-              // classNames={{
-              //   enter: "translate-y-full duration-500 ease-out",
-              //   enterDone:
-              //     "-translate-y-[72px] transition duration-500 ease-out",
-              //   exitActive: "-translate-y-[72px]",
-              //   exitDone: "translate-y-full transition duration-500 ease-out",
-              // }}
-            >
-              <div
-                className=" text-primary-700 flex flex-col justify-start items-center dark:bg-neutral-900 bg-default text-xs -translate-y-full transition-all duration-500"
-                ref={imageRef}
-              >
-                <KeyboardDoubleArrowUpIcon className="!w-4 !h-5" />
-                Opis
-              </div>
-            </CSSTransition>
-          )}
-        </SfLink>
-
-        {description && (
-          <CSSTransition
-            nodeRef={descriptionContainerRef}
-            in={isOpen}
-            timeout={100}
-            onEnter={() => {
-              console.log("entering desc");
-            }}
-            onExit={() => {
-              console.log("exiting desc");
-            }}
-            classNames={{
-              enter: "translate-y-0",
-              enterDone:
-                "-translate-y-[336px] transition duration-200 ease-out",
-              exitActive: "-translate-y-[336px]",
-              exitDone: "translate-y-0 transition duration-200 ease-out",
-            }}
-          >
-            <div
-              className="px-4 py-4 relative w-[300px] h-[300px] overflow-y-auto"
-              ref={descriptionContainerRef}
-              onClick={close}
-            >
-              <p
-                ref={descriptionRef}
-                className="block font-normal typography-text-sm text-default z-10 prose dark:prose-invert"
-              >
-                <Markdown>{description}</Markdown>
-              </p>
-              <div
-                className="absolute w-full top-0 left-0 right-0 h-full bg-gray-200 dark:bg-gray-800 opacity-40 filter blur-sm z-[-1]"
-                style={{ height: `max(100%,${descriptionHeight}px)` }}
-              />
-            </div>
-          </CSSTransition>
-        )}
-      </div>
-      <div className="px-4 pb-4 pt-2 dark:bg-neutral-900 min-h-32 flex flex-col justify-between rounded-b-md">
+      <ProductCardImage
+        image={image}
+        description={description}
+        isOpen={isOpen}
+        open={open}
+        close={close}
+        name={name}
+      />
+      <div className="px-4 pb-4 pt-2 dark:bg-neutral-900 min-h-32 flex flex-col justify-between rounded-b-md ">
         <SfScrollable
-          className="m-auto py-1 items-center w-full [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] overflow-x-auto !gap-0"
+          className="m-auto py-1 items-center w-full [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] overflow-x-auto !gap-0 min-h-10"
+          buttonsPlacement="none"
+          // draggable
+          drag={{
+            sensitivity: 1,
+          }}
           // drag
         >
           {kind?.map((k) => (
             <SfChip
               key={k.name}
-              size="sm"
-              className="mx-1 px-2 py-0 rounded-xl ring-1 ring-primary-700 text-nowrap text-xs flex flex-row"
+              size="base"
+              className="mx-1 px-2 py-0 rounded-xl ring-1 ring-primary-700 text-nowrap text-xs flex flex-row hover:text-white hover:bg-slate-500"
               slotPrefix={getSlotPrefix(k)}
             >
               {k.name}
             </SfChip>
           ))}
         </SfScrollable>
-        <div className="flex justify-between">
+        <div className="flex justify-between h-10 my-1 items-start">
           <SfLink href="#" variant="secondary" className="no-underline">
             {name}
           </SfLink>
@@ -272,11 +175,11 @@ export default function ProductCard({
           />
           <SfButton
             size="sm"
-            className="flex flex-grow ml-8 px-2 py-1 flex-row justify-evenly text-inherit"
+            className="flex flex-grow ml-4 px-2 py-1 flex-row justify-evenly text-inherit"
             slotPrefix={<SfIconShoppingCart className="text-sm fill-current" />}
             onClick={onAddToCart}
           >
-            Add to cart
+            Dodaj u korpu
           </SfButton>
         </div>
       </div>

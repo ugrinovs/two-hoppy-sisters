@@ -1,0 +1,4 @@
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/twohoppy/testing/
+    - /bin/cp -R app api assets auth .next components hooks mock public types utils ./*.yml ./*.json ./*.js ./*.ts ./*.mjs $DEPLOYPATH
